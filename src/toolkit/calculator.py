@@ -3,34 +3,60 @@ from src.constants import OPERATORS, PRIORITY
 from toolkit.errors import ValidationError
 
 def tokenize(expression: str) -> list:
-    for operator in OPERATORS:
-        expression = expression.replace(operator, f" {operator} ")
+    tokens = []
+    i = 0
 
-    expression = expression.split()
+    while i < len(expression):
+        char = expression[i]
 
-    if expression[0] == "-":
-        combined = "-" + expression[1]
-        expression[0:2] = [combined]
-    elif expression[0] == "+":
-        expression.remove(expression[0])
+        if char.isspace():
+            i += 1
+            continue
 
-    return expression
+        if expression[i:i + 2] == "//":
+            tokens.append(expression[i:i + 2])
+            i += 2
+            continue
 
-def validate(expression: list[str]) -> bool:
-    if not expression: raise ValidationError("Выражение не должно быть пустым", "empty_expression")
+        if char.isdigit() or char == ".":
+            start = i
+            while i < len(expression) and (expression[i].isdigit() or expression[i] == "."):
+                i += 1
+            tokens.append(expression[start:i])
+
+            continue
+
+        if char in OPERATORS:
+            tokens.append(char)
+            i += 1
+            continue
+
+        tokens.append(char)
+        i += 1
+
+    return tokens
+
+def validate(tokens: list[str]) -> bool:
+    if not tokens: raise ValidationError("Выражение не должно быть пустым", "empty_expression")
 
     expecting_number = True
-    is_allowed = True
 
-    for token in expression:
+    for i, token in enumerate(tokens):
         if expecting_number:
             if token in ("+", "-"):
-                if not is_allowed:
-                    raise ValidationError("Два оператора стоят подряд", "repeated_unary_sign")
+                next_token = tokens[i + 1] if i + 1 < len(tokens) else None
 
-                is_allowed = False
+                if next_token is None:
+                    raise ValidationError("Выражение не должно заканчиваться на оператор",
+                                            "missing_operand")
+
+                if next_token in OPERATORS:
+                    raise ValidationError("Два оператора стоят подряд","repeated_unary_sign")
+
                 continue
 
+            if token in OPERATORS:
+                raise ValidationError("Два оператора стоят подряд", "repeated_unary_sign")
             try:
                 float(token)
             except ValueError:
@@ -39,7 +65,7 @@ def validate(expression: list[str]) -> bool:
             expecting_number = False
         else:
             if token not in OPERATORS:
-                raise ValidationError("Между числами отсутствует оператор, или такой оператор не поддерживается",
+                raise ValidationError("Между числами отсутствует оператор, или присутствуют недопустимые символы",
                                       "missing_operator")
 
             expecting_number = True
@@ -48,6 +74,34 @@ def validate(expression: list[str]) -> bool:
                                                "missing_operand")
 
     return True
+
+def merge_unary_signs(tokens: list[str]) -> list[str]:
+    output = []
+    i = 0
+
+    while i < len(tokens):
+        merge_token = tokens[i]
+        prev_token = tokens[i - 1] if i > 0 else ""
+        next_token = tokens[i + 1] if i + 1 < len(tokens) else ""
+
+        if merge_token.isspace():
+            i += 1
+            continue
+
+        if merge_token in ("+", "-") and (prev_token == "" or prev_token in OPERATORS):
+            output.append(merge_token + next_token)
+            i += 2
+            continue
+
+        if merge_token in OPERATORS:
+            output.append(merge_token)
+            i += 1
+            continue
+
+        output.append(merge_token)
+        i += 1
+
+    return output
 
 def to_rpn(expression: list[str]) -> list[str]:
     stack = []
@@ -106,3 +160,12 @@ def calculate(rpn_tokens: list[str]) -> float:
         raise ValidationError("Неверно составленный RPN (в RPN должно остаться одно значение)", error_code="invalid_rpn")
 
     return stack[0]
+
+tokens = tokenize("-1 * -5")
+validate(tokens)
+tokens = merge_unary_signs(tokens)
+rpn_tokens = to_rpn(tokens)
+result = calculate(rpn_tokens)
+
+print(result)
+
