@@ -1,14 +1,17 @@
 
 import math
 
-from src.constants import LENGTH_GROUP, GROUPS, TEMPERATURE_GROUP
+from src.constants import GROUPS, TEMPERATURE_GROUP
 from toolkit.errors import ConverterError
 
-def _validate(value: float, from_unit: str, to_unit: str) -> bool:
+def _validate(value: float, from_unit: str, to_unit: str) -> dict:
     if not math.isfinite(value):
         raise ConverterError(message="Значение не является числом либо бесконечно", error_code="not_a_number")
 
-    if _find_group(from_unit) != _find_group(to_unit):
+    group_from = _find_group(from_unit)
+    group_to = _find_group(to_unit)
+
+    if group_from != group_to:
         raise ConverterError(message=f"Единицы {from_unit} и {to_unit} находятся в разных группах",
                              error_code="different_group")
 
@@ -16,7 +19,11 @@ def _validate(value: float, from_unit: str, to_unit: str) -> bool:
         raise ConverterError(message="Температура не может быть ниже абсолютного нуля",
                              error_code="below_absolute_zero")
 
-    return True
+    if group_from != TEMPERATURE_GROUP and value < 0:
+        raise ConverterError(message="Значение для данной группы не может быть отрицательным.",
+                             error_code="negative_value")
+
+    return group_from
 
 def _find_group(unit: str) -> dict:
     groups = [group for group in GROUPS if unit in group]
@@ -24,14 +31,14 @@ def _find_group(unit: str) -> dict:
     if len(groups) > 1:
         raise RuntimeError("Ошибка в исходном составлении групп")
     if len(groups) == 0:
-        raise ConverterError(message=f"Единица {unit} не существует", error_code="unknown_unit")
+        raise ConverterError(message=f"Единица '{unit}' не существует", error_code="unknown_unit")
 
     return groups[0]
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
-    from_unit, to_unit = from_unit.lower(), to_unit.lower()
-    _validate(value, from_unit, to_unit)
+    from_unit, to_unit = from_unit.lower().strip(), to_unit.lower().strip()
+    group = _validate(value, from_unit, to_unit)
 
     if from_unit in ('c', 'f', 'k'):
         to_kelvin = TEMPERATURE_GROUP[from_unit][0](value)
@@ -39,6 +46,4 @@ def convert(value: float, from_unit: str, to_unit: str) -> float:
 
         return new_scale
 
-    return value * LENGTH_GROUP[from_unit] / LENGTH_GROUP[to_unit]
-
-print(convert(-273.15, from_unit='c', to_unit='k'))
+    return value * group[from_unit] / group[to_unit]
