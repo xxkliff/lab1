@@ -1,8 +1,8 @@
 
 from src.constants import OPERATORS, PRIORITY
-from toolkit.errors import ValidationError
+from src.toolkit.errors import ValidationError
 
-def tokenize(expression: str) -> list:
+def _tokenize(expression: str) -> list:
     tokens = []
     i = 0
 
@@ -36,7 +36,7 @@ def tokenize(expression: str) -> list:
 
     return tokens
 
-def validate(tokens: list[str]) -> bool:
+def _validate(tokens: list[str]) -> bool:
     if not tokens: raise ValidationError("Выражение не должно быть пустым", "empty_expression")
 
     expecting_number = True
@@ -75,7 +75,7 @@ def validate(tokens: list[str]) -> bool:
 
     return True
 
-def merge_unary_signs(tokens: list[str]) -> list[str]:
+def _merge_unary_signs(tokens: list[str]) -> list[str]:
     output = []
     i = 0
 
@@ -103,7 +103,7 @@ def merge_unary_signs(tokens: list[str]) -> list[str]:
 
     return output
 
-def to_rpn(expression: list[str]) -> list[str]:
+def _to_rpn(expression: list[str]) -> list[str]:
     stack = []
     output = []
 
@@ -122,7 +122,7 @@ def to_rpn(expression: list[str]) -> list[str]:
 
     return output
 
-def apply_operator(a: float, b: float, operator: str) -> float:
+def _apply_operator(a: float, b: float, operator: str) -> float:
     match operator:
         case "+":
             return a + b
@@ -140,13 +140,13 @@ def apply_operator(a: float, b: float, operator: str) -> float:
             raise ValidationError("Оператор не поддерживается", 'undefined_operator')
 
 
-def calculate(rpn_tokens: list[str]) -> float:
+def _calculate_rpn(rpn_tokens: list[str]) -> float:
     stack = []
 
     for token in rpn_tokens:
         try:
             float(token)
-            stack.append(token)
+            stack.append(float(token))
         except ValueError:
             if len(stack) < 2:
                 raise ValidationError("Неверно составленный RPN (не хватает операндов)", error_code="invalid_rpn")
@@ -154,18 +154,16 @@ def calculate(rpn_tokens: list[str]) -> float:
             num2 = float(stack.pop())
             num1 = float(stack.pop())
 
-            stack.append(apply_operator(num1, num2, token))
+            stack.append(_apply_operator(num1, num2, token))
 
     if len(stack) != 1:
         raise ValidationError("Неверно составленный RPN (в RPN должно остаться одно значение)", error_code="invalid_rpn")
 
-    return stack[0]
+    return float(stack[0])
 
-tokens = tokenize("-1 * -5")
-validate(tokens)
-tokens = merge_unary_signs(tokens)
-rpn_tokens = to_rpn(tokens)
-result = calculate(rpn_tokens)
-
-print(result)
-
+def evaluate(expression: str) -> float:
+    tokens = _tokenize(expression)
+    _validate(tokens)
+    tokens = _merge_unary_signs(tokens)
+    rpn_tokens = _to_rpn(tokens)
+    return _calculate_rpn(rpn_tokens)
