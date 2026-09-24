@@ -1,5 +1,5 @@
 
-from src.constants import OPERATORS, PRIORITY
+from toolkit.constants import OPERATORS, PRIORITY
 from src.toolkit.errors import ValidationError
 
 def _tokenize(expression: str) -> list:
