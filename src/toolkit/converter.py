@@ -1,7 +1,7 @@
 
 import math
 
-from src.constants import GROUPS, TEMPERATURE_GROUP
+from constants import GROUPS, TEMPERATURE_GROUP
 from toolkit.errors import ConverterError
 
 def _validate(value: float, from_unit: str, to_unit: str) -> dict:
