@@ -1,6 +1,7 @@
 
 from toolkit.constants import OPERATORS, PRIORITY
-from src.toolkit.errors import ValidationError
+from toolkit.errors import ValidationError
+
 
 def _tokenize(expression: str) -> list:
     tokens = []
@@ -37,7 +38,7 @@ def _tokenize(expression: str) -> list:
     return tokens
 
 def _validate(tokens: list[str]) -> bool:
-    if not tokens: raise ValidationError("Выражение не должно быть пустым", "empty_expression")
+    if not tokens: raise ValidationError("выражение пустое или некорректно.", "empty_expression")
 
     expecting_number = True
 
@@ -47,30 +48,32 @@ def _validate(tokens: list[str]) -> bool:
                 next_token = tokens[i + 1] if i + 1 < len(tokens) else None
 
                 if next_token is None:
-                    raise ValidationError("Выражение не должно заканчиваться на оператор",
+                    raise ValidationError("выражение не может заканчиваться на оператор.",
                                             "missing_operand")
 
                 if next_token in OPERATORS:
-                    raise ValidationError("Два оператора стоят подряд","repeated_unary_sign")
+                    raise ValidationError("несколько операторав не могут стоять подряд.","repeated_unary_sign")
 
                 continue
 
             if token in OPERATORS:
-                raise ValidationError("Два оператора стоят подряд", "repeated_unary_sign")
+                raise ValidationError("несколько операторав не могут стоять подряд.","repeated_unary_sign")
             try:
                 float(token)
             except ValueError:
-                raise ValidationError("В выражении используются недопустимые символы", "invalid_number")
+                raise ValidationError("в выражении используются недопустимые символы.", "invalid_number")
 
             expecting_number = False
         else:
             if token not in OPERATORS:
-                raise ValidationError("Между числами отсутствует оператор, или присутствуют недопустимые символы",
-                                      "missing_operator")
+                if not token.isdigit():
+                    raise ValidationError("в выражении используются недопустимые символы.", "invalid_number")
+
+                raise ValidationError("между числами отсутствует оператор.", "missing_operator")
 
             expecting_number = True
 
-    if expecting_number: raise ValidationError("Выражение не должно заканчиваться на оператор",
+    if expecting_number: raise ValidationError("выражение не может заканчиваться на оператор.",
                                                "missing_operand")
 
     return True
@@ -137,7 +140,7 @@ def _apply_operator(a: float, b: float, operator: str) -> float:
         case "%":
             return a % b
         case _:
-            raise ValidationError("Оператор не поддерживается", 'undefined_operator')
+            raise ValidationError("выражение содержит неподдерживаемый оператор.", 'undefined_operator')
 
 
 def _calculate_rpn(rpn_tokens: list[str]) -> float:
@@ -149,7 +152,7 @@ def _calculate_rpn(rpn_tokens: list[str]) -> float:
             stack.append(float(token))
         except ValueError:
             if len(stack) < 2:
-                raise ValidationError("Неверно составленный RPN (не хватает операндов)", error_code="invalid_rpn")
+                raise RuntimeError("Неверно составленный RPN (не хватает операндов).")
 
             num2 = float(stack.pop())
             num1 = float(stack.pop())
@@ -157,7 +160,7 @@ def _calculate_rpn(rpn_tokens: list[str]) -> float:
             stack.append(_apply_operator(num1, num2, token))
 
     if len(stack) != 1:
-        raise ValidationError("Неверно составленный RPN (в RPN должно остаться одно значение)", error_code="invalid_rpn")
+        raise RuntimeError("Неверно составленный RPN (в RPN должно остаться одно значение).")
 
     return float(stack[0])
 

@@ -1,26 +1,28 @@
 
 import math
 
-from src.constants import GROUPS, TEMPERATURE_GROUP
+from toolkit.constants import GROUPS, TEMPERATURE_GROUP
 from toolkit.errors import ConverterError
+
 
 def _validate(value: float, from_unit: str, to_unit: str) -> dict:
     if not math.isfinite(value):
-        raise ConverterError(message="Значение не является числом либо бесконечно", error_code="not_a_number")
+        raise ConverterError(message="значение не является числом или бесконечно.", error_code="not_a_number")
 
     group_from = _find_group(from_unit)
     group_to = _find_group(to_unit)
 
     if group_from != group_to:
-        raise ConverterError(message=f"Единицы {from_unit} и {to_unit} находятся в разных группах",
+        raise ConverterError(message=f"единицы измерения '{from_unit}' и '{to_unit}' находятся в разных группах и "
+                                     f"несовместимы с друг другом.",
                              error_code="different_group")
 
     if (from_unit == 'c' and value < -273.15) or (from_unit == 'f' and value < -459.67) or (from_unit == 'k' and value < 0):
-        raise ConverterError(message="Температура не может быть ниже абсолютного нуля",
+        raise ConverterError(message="температура не может быть ниже абсолютного нуля",
                              error_code="below_absolute_zero")
 
     if group_from != TEMPERATURE_GROUP and value < 0:
-        raise ConverterError(message="Значение для данной группы не может быть отрицательным.",
+        raise ConverterError(message="значение для данной группы не может быть отрицательным.",
                              error_code="negative_value")
 
     return group_from
@@ -31,7 +33,7 @@ def _find_group(unit: str) -> dict:
     if len(groups) > 1:
         raise RuntimeError("Ошибка в исходном составлении групп")
     if len(groups) == 0:
-        raise ConverterError(message=f"Единица '{unit}' не существует", error_code="unknown_unit")
+        raise ConverterError(message=f"неизвестная единица '{unit}'", error_code="unknown_unit")
 
     return groups[0]
 
