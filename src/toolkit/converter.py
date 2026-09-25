@@ -4,6 +4,7 @@ import math
 from toolkit.constants import GROUPS, TEMPERATURE_GROUP
 from toolkit.errors import ConverterError
 
+
 def _validate(value: float, from_unit: str, to_unit: str) -> dict:
     if not math.isfinite(value):
         raise ConverterError(message="значение не является числом или бесконечно.", error_code="not_a_number")

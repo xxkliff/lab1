@@ -2,6 +2,7 @@
 from toolkit.constants import OPERATORS, PRIORITY
 from toolkit.errors import ValidationError
 
+
 def _tokenize(expression: str) -> list:
     tokens = []
     i = 0

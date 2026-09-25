@@ -2,8 +2,8 @@
 import argparse
 import sys
 
-from toolkit.converter import convert
 from toolkit.calculator import evaluate
+from toolkit.converter import convert
 from toolkit.errors import ToolkitError
 
 

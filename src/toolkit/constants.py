@@ -1,5 +1,5 @@
 
-from typing import Callable, Dict, Tuple
+from collections.abc import Callable
 
 OPERATORS: tuple[str, ...] = ("+", "-", "*", "/", "//", "%")
 
@@ -23,11 +23,11 @@ WEIGHT_GROUP: dict[str, float] = {
     "kg": 1000.0,
 }
 
-TEMPERATURE_GROUP: Dict[str, Tuple[Callable[[float], float], Callable[[float], float]]]= {
+TEMPERATURE_GROUP: dict[str, tuple[Callable[[float], float], Callable[[float], float]]]= {
     "c": (lambda c: c + 273.15, lambda k: k - 273.15),
     "k": (lambda k: k, lambda k: k),
     "f": (lambda f: (f - 32)*5/9 + 273.15, lambda k: (k - 273.15)*9/5 + 32)
 }
 
-GROUPS: list[Dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
+GROUPS: list[dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
 
