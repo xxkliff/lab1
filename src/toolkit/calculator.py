@@ -52,12 +52,12 @@ def _validate(tokens: list[str]) -> bool:
                                             "missing_operand")
 
                 if next_token in OPERATORS:
-                    raise ValidationError("несколько операторав не могут стоять подряд.","repeated_unary_sign")
+                    raise ValidationError("несколько операторав не могут стоять подряд.","unexpected_operator")
 
                 continue
 
             if token in OPERATORS:
-                raise ValidationError("несколько операторав не могут стоять подряд.","repeated_unary_sign")
+                raise ValidationError("несколько операторав не могут стоять подряд.","unexpected_operator")
             try:
                 float(token)
             except ValueError:
@@ -126,21 +126,24 @@ def _to_rpn(expression: list[str]) -> list[str]:
     return output
 
 def _apply_operator(a: float, b: float, operator: str) -> float:
-    match operator:
-        case "+":
-            return a + b
-        case "-":
-            return a - b
-        case "*":
-            return a * b
-        case "/":
-            return a / b
-        case "//":
-            return a // b
-        case "%":
-            return a % b
-        case _:
-            raise ValidationError("выражение содержит неподдерживаемый оператор.", 'undefined_operator')
+    try:
+        match operator:
+            case "+":
+                return a + b
+            case "-":
+                return a - b
+            case "*":
+                return a * b
+            case "/":
+                return a / b
+            case "//":
+                return a // b
+            case "%":
+                return a % b
+            case _:
+                raise ValidationError("выражение содержит неподдерживаемый оператор.", 'undefined_operator')
+    except ZeroDivisionError:
+        raise ValidationError("деление на ноль", 'division_by_zero')
 
 
 def _calculate_rpn(rpn_tokens: list[str]) -> float:

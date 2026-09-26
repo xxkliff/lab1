@@ -38,8 +38,10 @@ def main(argv: list[str] | None = None) -> int:
     # python3.14 -m toolkit convert [float] [--from str] [--to str]
     conv_parser = subparsers.add_parser("convert", help="перевести из одной величины в другую")
     conv_parser.add_argument('value', type=float, help='значение для перевода')
-    conv_parser.add_argument('--from', type=str, dest="from_unit", help='исходная единица', required=True)
-    conv_parser.add_argument('--to', type=str, dest="to_unit", help='итоговая единица', required=True)
+    conv_parser.add_argument('--from', type=str, dest="from_unit", help='исходная единица',
+                             metavar="UNIT", required=True)
+    conv_parser.add_argument('--to', type=str, dest="to_unit",
+                             metavar="UNIT", help='итоговая единица', required=True)
     conv_parser.set_defaults(func=_convert_func)
 
     args = parser.parse_args(argv)
