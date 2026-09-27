@@ -1,4 +1,3 @@
-
 import pytest
 
 from toolkit.calculator import evaluate
