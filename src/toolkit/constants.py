@@ -1,4 +1,3 @@
-
 from collections.abc import Callable
 
 # Операторы калькулятора и их приоритет
@@ -33,4 +32,3 @@ TEMPERATURE_GROUP: dict[str, tuple[Callable[[float], float], Callable[[float], f
 }
 
 GROUPS: list[dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
-
