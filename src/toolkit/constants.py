@@ -1,6 +1,7 @@
 
 from collections.abc import Callable
 
+# Операторы калькулятора и их приоритет
 OPERATORS: tuple[str, ...] = ("+", "-", "*", "/", "//", "%")
 
 PRIORITY: dict[str, int] = {"+": 2,
@@ -11,6 +12,7 @@ PRIORITY: dict[str, int] = {"+": 2,
                             "%": 3
 }
 
+# Множитель перевода в базовую единицу группы
 LENGTH_GROUP: dict[str, float] = {
     "mm": 0.001,
     "cm": 0.01,
@@ -23,6 +25,7 @@ WEIGHT_GROUP: dict[str, float] = {
     "kg": 1000.0,
 }
 
+# Для каждой шкалы две функции: 1) перевод в кельвины 2) перевод из кельвинов
 TEMPERATURE_GROUP: dict[str, tuple[Callable[[float], float], Callable[[float], float]]]= {
     "c": (lambda c: c + 273.15, lambda k: k - 273.15),
     "k": (lambda k: k, lambda k: k),

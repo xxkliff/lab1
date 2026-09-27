@@ -1,11 +1,17 @@
 
 class ToolkitError(Exception):
+    """Базовая ошибка toolkit"""
+
     def __init__(self, message, error_code):
+        """
+        :param message: текст ошибки для пользователя
+        :param error_code: код ошибки
+        """
         super().__init__(message)
         self.error_code = error_code
 
 class ConverterError(ToolkitError):
-    pass
+    """Ошибка конвертера"""
 
 class ValidationError(ToolkitError):
-    pass
+    """Ошибка калькулятора"""

@@ -8,10 +8,12 @@ from toolkit.errors import ToolkitError
 
 
 def _convert_func(args) -> None:
+    """Переводит значение из аргументов команды convert и печатает результат в stdout."""
     result = convert(args.value, args.from_unit, args.to_unit)
     print(f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}")
 
 def _calculate_func(args) -> None:
+    """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
     result = evaluate(args.expression)
     print(f"{result:.10g}")
 
