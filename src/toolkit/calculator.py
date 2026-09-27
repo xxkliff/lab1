@@ -48,6 +48,14 @@ def _tokenize(expression: str) -> list[str]:
 
 
 def _is_number(token: str) -> bool:
+    """
+    Проверка, является ли токен числом
+
+    Стандартная функция isdigit не подходит, т.к. для вещественных чисел возвращает False
+
+    :param token: токен в обычном виде
+    :return: True, если является, иначе False
+    """
     try:
         float(token)
     except ValueError:
