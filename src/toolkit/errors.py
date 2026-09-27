@@ -2,7 +2,7 @@
 class ToolkitError(Exception):
     """Базовая ошибка toolkit"""
 
-    def __init__(self, message: str, error_code: str):
+    def __init__(self, message: str, error_code: str) -> None:
         """
         :param message: текст ошибки для пользователя
         :param error_code: код ошибки
