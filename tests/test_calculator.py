@@ -37,6 +37,7 @@ def test_evaluate_positive(expression: str, expected: float) -> None:
         ("5//0", "division_by_zero"),
         ("10%0", "division_by_zero"),
         ("2 3", "missing_operator"),
+        ("2 3.5", "missing_operator"),
     ],
 )
 def test_evaluate_negative(expression: str, error_code: str) -> None:

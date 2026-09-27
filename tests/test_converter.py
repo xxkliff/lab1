@@ -23,6 +23,9 @@ from toolkit.errors import ConverterError
 def test_convert_positive(value: float, from_unit: str, to_unit: str, expected: float) -> None:
     assert convert(value, from_unit, to_unit) == pytest.approx(expected)
 
+def test_convert_returns_float() -> None:
+    assert isinstance(convert(5, "k", "k"), float)
+
 @pytest.mark.parametrize(
     ("value", "from_unit", "to_unit", "error_code"),
     [

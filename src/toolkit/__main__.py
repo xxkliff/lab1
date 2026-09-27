@@ -7,11 +7,13 @@ from toolkit.converter import convert
 from toolkit.errors import ToolkitError
 
 
-def _convert_func(args) -> None:
+def _convert_func(args: argparse.Namespace) -> None:
+    """Переводит значение из аргументов команды convert и печатает результат в stdout."""
     result = convert(args.value, args.from_unit, args.to_unit)
     print(f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}")
 
-def _calculate_func(args) -> None:
+def _calculate_func(args: argparse.Namespace) -> None:
+    """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
     result = evaluate(args.expression)
     print(f"{result:.10g}")
 
@@ -23,11 +25,11 @@ def main(argv: list[str] | None = None) -> int:
     разработчиком, обрабатываются стандартными ошибками Python
 
     :param argv: аргументы команды. Если None - берутся из командной строки
-    :return: 0 при успезе, 2 при ошибке
+    :return: 0 при успехе, 2 при ошибке
     """
     parser = argparse.ArgumentParser(
         prog="toolkit",
-        description="Набор утилит: калькулятор и конвертор единиц")
+        description="Набор утилит: калькулятор и конвертер единиц")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # python3.14 -m toolkit calc "expression"
