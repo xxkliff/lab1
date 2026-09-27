@@ -1,4 +1,3 @@
-
 from toolkit.constants import OPERATORS, PRIORITY
 from toolkit.errors import ValidationError
 

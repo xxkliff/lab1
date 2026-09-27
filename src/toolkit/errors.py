@@ -1,4 +1,3 @@
-
 class ToolkitError(Exception):
     """Базовая ошибка toolkit"""
 

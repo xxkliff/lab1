@@ -1,4 +1,3 @@
-
 import pytest
 
 from toolkit.__main__ import main
@@ -45,4 +44,3 @@ def test_cli_missing_argument(capsys: pytest.CaptureFixture[str]) -> None:
 
     assert exc_info.value.code == 2
     assert "--to" in capsys.readouterr().err
-

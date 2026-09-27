@@ -1,4 +1,3 @@
-
 import math
 
 from toolkit.constants import GROUPS, TEMPERATURE_GROUP
