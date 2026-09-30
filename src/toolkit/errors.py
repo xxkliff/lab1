@@ -12,5 +12,8 @@ class ToolkitError(Exception):
 class ConverterError(ToolkitError):
     """Ошибка конвертера"""
 
+class HistoryError(ToolkitError):
+    """Ошибка в функционале истории"""
+
 class ValidationError(ToolkitError):
     """Ошибка калькулятора"""

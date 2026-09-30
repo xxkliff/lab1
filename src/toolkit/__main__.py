@@ -14,6 +14,7 @@ def _convert_func(args: argparse.Namespace) -> None:
 def _calculate_func(args: argparse.Namespace) -> None:
     """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
     result = evaluate(args.expression)
+    print(Path("history.json").cwd())
     print(f"{result:.10g}")
 
 def main(argv: list[str] | None = None) -> int:
