@@ -15,14 +15,14 @@ def _convert_func(args: argparse.Namespace) -> tuple[str, float]:
     expression = f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}"
     print(expression)
 
-    return expression, result
+    return "convert " + expression, result
 
 def _calculate_func(args: argparse.Namespace) -> tuple[str, float]:
     """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
     result = evaluate(args.expression)
     print(f"{result:.10g}")
 
-    return args.expression, result
+    return "calc " + args.expression, result
 
 def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HISTORY_PATH) -> int:
     """
@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HIST
         if history_path is not None:
             add_entry(history_path, expression, result)
     except HistoryError as e:
-        print(f"Ошибка: {e}", file=sys.stderr)
+        print(f"Предупреждение: {e}", file=sys.stderr)
     except ToolkitError as e:
         print(f"Ошибка: {e}", file=sys.stderr)
         return 2
