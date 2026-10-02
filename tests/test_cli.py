@@ -4,7 +4,7 @@ from toolkit.__main__ import main
 
 
 def test_cli_calc_positive(capsys: pytest.CaptureFixture[str]) -> None:
-    code = main(["calc", "2+2"])
+    code = main(["calc", "2+2"], history_path=None)
     out, err = capsys.readouterr()
 
     assert code == 0
@@ -13,7 +13,7 @@ def test_cli_calc_positive(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 def test_cli_calc_negative(capsys: pytest.CaptureFixture[str]) -> None:
-    code = main(["calc", "1/0"])
+    code = main(["calc", "1/0"], history_path=None)
     out, err = capsys.readouterr()
 
     assert code == 2
@@ -30,7 +30,7 @@ def test_cli_help(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 def test_cli_convert_positive(capsys: pytest.CaptureFixture[str]) -> None:
-    code = main(["convert", "1", "--from", "cm", "--to", "mm"])
+    code = main(["convert", "1", "--from", "cm", "--to", "mm"], history_path=None)
     out, err = capsys.readouterr()
 
     assert code == 0
@@ -40,7 +40,7 @@ def test_cli_convert_positive(capsys: pytest.CaptureFixture[str]) -> None:
 
 def test_cli_missing_argument(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
-        main(["convert", "10", "--from", "to"])
+        main(["convert", "10", "--from", "to"], history_path=None)
 
     assert exc_info.value.code == 2
     assert "--to" in capsys.readouterr().err

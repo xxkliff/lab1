@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from pathlib import Path
 
 # Операторы калькулятора и их приоритет
 OPERATORS: tuple[str, ...] = ("+", "-", "*", "/", "//", "%")
@@ -32,3 +33,4 @@ TEMPERATURE_GROUP: dict[str, tuple[Callable[[float], float], Callable[[float], f
 }
 
 GROUPS: list[dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
+DEFAULT_HISTORY_PATH: Path = Path(__file__).resolve().parents[2] / "history.json"

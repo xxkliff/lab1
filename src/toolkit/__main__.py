@@ -1,28 +1,37 @@
 import argparse
 import sys
+from pathlib import Path
 
 from toolkit.calculator import evaluate
+from toolkit.constants import DEFAULT_HISTORY_PATH
 from toolkit.converter import convert
-from toolkit.errors import ToolkitError
+from toolkit.errors import HistoryError, ToolkitError
+from toolkit.history import add_entry
 
 
-def _convert_func(args: argparse.Namespace) -> None:
+def _convert_func(args: argparse.Namespace) -> tuple[str, float]:
     """Переводит значение из аргументов команды convert и печатает результат в stdout."""
     result = convert(args.value, args.from_unit, args.to_unit)
-    print(f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}")
+    expression = f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}"
+    print(expression)
 
-def _calculate_func(args: argparse.Namespace) -> None:
+    return "convert " + expression, result
+
+def _calculate_func(args: argparse.Namespace) -> tuple[str, float]:
     """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
     result = evaluate(args.expression)
     print(f"{result:.10g}")
 
-def main(argv: list[str] | None = None) -> int:
+    return "calc " + args.expression, result
+
+def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HISTORY_PATH) -> int:
     """
     Точка входа CLI, разбирает команду на аргументы и вызывает convert и evaluate
 
     Результат идет в stdout, а ошибки ядра (ToolkitError) в stderr. Все остальные ошибки, связанные с
     разработчиком, обрабатываются стандартными ошибками Python
 
+    :param history_path: путь к json файлу с историей
     :param argv: аргументы команды. Если None - берутся из командной строки
     :return: 0 при успехе, 2 при ошибке
     """
@@ -47,7 +56,12 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     try:
-        args.func(args)
+        expression, result = args.func(args)
+
+        if history_path is not None:
+            add_entry(history_path, expression, result)
+    except HistoryError as e:
+        print(f"Предупреждение: {e}", file=sys.stderr)
     except ToolkitError as e:
         print(f"Ошибка: {e}", file=sys.stderr)
         return 2
