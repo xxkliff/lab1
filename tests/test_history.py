@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from toolkit.errors import HistoryError
 from toolkit.history import add_entry, load_history
 
 
@@ -24,6 +25,28 @@ def test_add_entry(tmp_path: Path, expression: str, result: float) -> None:
     assert history[0]["result"] == result
     assert len(history) == 1
 
+
+@pytest.mark.parametrize(
+    ("content", "error_code"),
+    [
+        ("[[[", "json_decode_error"),
+        ("не json", "json_decode_error"),
+        ("{}", "json_history_format"),
+    ]
+)
+def test_invalid_json(tmp_path: Path, content: str, error_code: str) -> None:
+    path = tmp_path / "history.json"
+
+    path.write_text(content, encoding="utf-8")
+
+    with pytest.raises(HistoryError) as exc:
+        load_history(path)
+    assert exc.value.error_code == error_code
+    assert path.read_text(encoding="utf-8") == content
+
+
+def test_load_history() -> None:
+    assert load_history(Path("BDbdDBd8BD9db9BD99****")) == []
 
 @pytest.mark.parametrize(
     "entries",
