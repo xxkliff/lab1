@@ -350,7 +350,6 @@ cython_debug/
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-history.json
 
 # AWS User-specific
 
@@ -394,3 +393,5 @@ history.json
 # Editor-based Rest Client
 
 # Android studio 3.1+ serialized cache file
+
+history.json

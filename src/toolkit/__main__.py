@@ -10,19 +10,29 @@ from toolkit.history import add_entry
 
 
 def _convert_func(args: argparse.Namespace) -> tuple[str, float]:
-    """Переводит значение из аргументов команды convert и печатает результат в stdout."""
+    """
+    Переводит значение из аргументов команды convert и печатает результат в stdout.
+
+    :return: результат для истории
+    """
     result = convert(args.value, args.from_unit, args.to_unit)
     expression = f"{args.value:.10g} {args.from_unit} -> {result:.10g} {args.to_unit}"
     print(expression)
 
     return "convert " + expression, result
 
+
 def _calculate_func(args: argparse.Namespace) -> tuple[str, float]:
-    """Вычисляет выражение из аргументов команды calc и печатает результат в stdout."""
+    """
+    Вычисляет выражение из аргументов команды calc и печатает результат в stdout.
+
+    :return: результат для истории
+    """
     result = evaluate(args.expression)
     print(f"{result:.10g}")
 
     return "calc " + args.expression, result
+
 
 def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HISTORY_PATH) -> int:
     """
@@ -40,18 +50,18 @@ def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HIST
         description="Набор утилит: калькулятор и конвертер единиц")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # python3.14 -m toolkit calc "expression"
+    # python -m toolkit calc "expression"
     calc_parser = subparsers.add_parser("calc", help="вычислить арифметическое выражение")
     calc_parser.add_argument("expression", help='выражение в кавычках, например "1 + 2 * 3"')
     calc_parser.set_defaults(func=_calculate_func)
 
-    # python3.14 -m toolkit convert [float] [--from str] [--to str]
+    # python -m toolkit convert [float] [--from str] [--to str]
     conv_parser = subparsers.add_parser("convert", help="перевести из одной величины в другую")
-    conv_parser.add_argument('value', type=float, help='значение для перевода')
-    conv_parser.add_argument('--from', type=str, dest="from_unit", help='исходная единица',
+    conv_parser.add_argument("value", type=float, help="значение для перевода")
+    conv_parser.add_argument("--from", type=str, dest="from_unit", help='исходная единица',
                              metavar="UNIT", required=True)
-    conv_parser.add_argument('--to', type=str, dest="to_unit",
-                             metavar="UNIT", help='итоговая единица', required=True)
+    conv_parser.add_argument("--to", type=str, dest="to_unit",
+                             metavar="UNIT", help="итоговая единица", required=True)
     conv_parser.set_defaults(func=_convert_func)
 
     args = parser.parse_args(argv)
@@ -67,6 +77,7 @@ def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HIST
         return 2
 
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -19,7 +19,7 @@ def load_history(path: Path) -> list[dict]:
     except FileNotFoundError:
         return []
     except OSError as e:
-        raise HistoryError("Нет прав на чтение файла history.json или путь неверный.",
+        raise HistoryError(f"Нет прав на чтение файла {path} или путь неверный.",
                            "permission_error") from e
     except (json.JSONDecodeError, UnicodeDecodeError) as e:
         raise HistoryError("JSON файл с историей не читается. Пожалуйста, исправьте его или удалите.",

@@ -174,9 +174,9 @@ def _apply_operator(a: float, b: float, operator: str) -> float:
             case "%":
                 return a % b
             case _:
-                raise ValidationError("выражение содержит неподдерживаемый оператор.", 'undefined_operator')
+                raise ValidationError("выражение содержит неподдерживаемый оператор.", "undefined_operator")
     except ZeroDivisionError:
-        raise ValidationError("деление на ноль", 'division_by_zero')
+        raise ValidationError("деление на ноль", "division_by_zero") from None
 
 
 def _calculate_rpn(rpn_tokens: list[str]) -> float:
