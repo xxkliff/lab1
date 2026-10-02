@@ -6,7 +6,7 @@ def _tokenize(expression: str) -> list[str]:
     """
     Разбивает строку выражения на токены: числа и операторы
 
-    Пробелы пропускаются, недопустимые символы тоже становятся токенами, потом их отсекает _validate
+    Пробелы пропускаются, недопустимые символы тоже становятся токенами, потом их убирает _validate
     "//" воспринимается как один токен
 
     :param expression: исходная строка, введённая пользователем
@@ -35,11 +35,6 @@ def _tokenize(expression: str) -> list[str]:
 
             continue
 
-        if char in OPERATORS:
-            tokens.append(char)
-            i += 1
-            continue
-
         tokens.append(char)
         i += 1
 
@@ -62,14 +57,13 @@ def _is_number(token: str) -> bool:
     return True
 
 
-def _validate(tokens: list[str]) -> bool:
+def _validate(tokens: list[str]) -> None:
     """
     Проверяет, что токены образуют корректное выражение: числа и операторы чередуются, унарный знак стоит только
     перед числом
 
     :param tokens: токены в обычном виде
     :raises ValidationError: выкидывается с определённым кодом, если выражение не прошло проверку
-    :return: True, если все проверки прошли
     """
     if not tokens:
         raise ValidationError("выражение пустое или некорректно.", "empty_expression")
@@ -101,17 +95,12 @@ def _validate(tokens: list[str]) -> bool:
     if expecting_number:
         raise ValidationError("выражение не может заканчиваться на оператор.", "missing_operand")
 
-    return True
-
 
 def _merge_unary_signs(tokens: list[str]) -> list[str]:
     """
     Приклеивает унарный + или - к следующему числу за ним
 
-    Знак считается унарным в двух случаях:
-
-    1) если стоит в начале выражения
-    2) если стоит после другого оператора
+    Знак считается унарным, если стоит в начале выражения или после другого оператора
 
     :param tokens: токены в обычной записи
     :return: токены, где унарные операторы соединены с числом
@@ -127,11 +116,6 @@ def _merge_unary_signs(tokens: list[str]) -> list[str]:
         if merge_token in ("+", "-") and (prev_token == "" or prev_token in OPERATORS):
             output.append(merge_token + next_token)
             i += 2
-            continue
-
-        if merge_token in OPERATORS:
-            output.append(merge_token)
-            i += 1
             continue
 
         output.append(merge_token)
@@ -155,14 +139,13 @@ def _to_rpn(expression: list[str]) -> list[str]:
     output: list[str] = []
 
     for token in expression:
-        try:
-            float(token)
+        if _is_number(token):
             output.append(token)
-        except ValueError:
-            while stack and PRIORITY[stack[-1]] >= PRIORITY[token]:
-                output.append(stack.pop())
+            continue
+        while stack and PRIORITY[stack[-1]] >= PRIORITY[token]:
+            output.append(stack.pop())
 
-            stack.append(token)
+        stack.append(token)
 
     while stack:
         output.append(stack.pop())
@@ -172,7 +155,7 @@ def _to_rpn(expression: list[str]) -> list[str]:
 
 def _apply_operator(a: float, b: float, operator: str) -> float:
     """
-    Применяет бинарный оператор к двум числам a и b в соответствующем порядке
+    Применяет оператор к двум числам a и b в соответствующем порядке
 
     :raises ValidationError: при делении на ноль или неизвестном операторе
     """
@@ -228,7 +211,7 @@ def evaluate(expression: str) -> float:
     """
     Вычисляет арифметическое выражение
 
-    Выражение проходит через путь: токенизация -> валидация -> склейка унарных знаков ->
+    Выражение проходит через: токенизацию -> валидацию -> склейку унарных знаков ->
     перевод в обратную польскую запись -> вычисление результата из неё
 
     :param expression: выражение, например "2 + 3 * -4"

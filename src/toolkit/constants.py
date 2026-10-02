@@ -36,4 +36,3 @@ GROUPS: list[dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
 
 PROJECT_PARENT_PATH: Path = Path(__file__).resolve().parents[2]
 DEFAULT_HISTORY_PATH: Path = PROJECT_PARENT_PATH / "history.json"
-

@@ -1,10 +1,11 @@
 import math
+from typing import Any
 
 from toolkit.constants import GROUPS, TEMPERATURE_GROUP
 from toolkit.errors import ConverterError
 
 
-def _find_group(unit: str) -> dict[str, float]:
+def _find_group(unit: str) -> dict[str, Any]:
     """
     Находит группу, к которой относится единица измерения
 
