@@ -51,12 +51,13 @@ def main(argv: list[str] | None = None, history_path: Path | None = DEFAULT_HIST
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # python -m toolkit calc "expression"
-    calc_parser = subparsers.add_parser("calc", help="вычислить арифметическое выражение")
+    calc_parser = subparsers.add_parser("calc", help='вычислить арифметическое выражение: calc "EXPRESSION"')
     calc_parser.add_argument("expression", help='выражение в кавычках, например "1 + 2 * 3"')
     calc_parser.set_defaults(func=_calculate_func)
 
     # python -m toolkit convert [float] [--from str] [--to str]
-    conv_parser = subparsers.add_parser("convert", help="перевести из одной величины в другую")
+    conv_parser = subparsers.add_parser("convert", help="перевести из одной величины в другую: "
+                                                        "convert VALUE --from UNIT --to UNIT")
     conv_parser.add_argument("value", type=float, help="значение для перевода")
     conv_parser.add_argument("--from", type=str, dest="from_unit", help='исходная единица',
                              metavar="UNIT", required=True)
