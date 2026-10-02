@@ -46,7 +46,7 @@ def test_invalid_json(tmp_path: Path, content: str, error_code: str) -> None:
 
 
 def test_load_history() -> None:
-    assert load_history(Path("BDbdDBd8BD9db9BD99****")) == []
+    assert load_history(Path("BDbdDBd8BD9db9BD9")) == []
 
 @pytest.mark.parametrize(
     "entries",
