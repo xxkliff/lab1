@@ -33,4 +33,7 @@ TEMPERATURE_GROUP: dict[str, tuple[Callable[[float], float], Callable[[float], f
 }
 
 GROUPS: list[dict] = [LENGTH_GROUP, TEMPERATURE_GROUP, WEIGHT_GROUP]
-DEFAULT_HISTORY_PATH: Path = Path(__file__).resolve().parents[2] / "history.json"
+
+PROJECT_PARENT_PATH: Path = Path(__file__).resolve().parents[2]
+DEFAULT_HISTORY_PATH: Path = PROJECT_PARENT_PATH / "history.json"
+
