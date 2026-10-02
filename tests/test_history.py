@@ -45,8 +45,12 @@ def test_invalid_json(tmp_path: Path, content: str, error_code: str) -> None:
     assert path.read_text(encoding="utf-8") == content
 
 
-def test_load_history() -> None:
-    assert load_history(Path("BDbdDBd8BD9db9BD9")) == []
+def test_load_history(tmp_path: Path) -> None:
+    path = tmp_path / "missing.json"
+
+    assert load_history(path) == []
+    assert not path.exists()
+
 
 @pytest.mark.parametrize(
     "entries",
@@ -58,9 +62,9 @@ def test_load_history() -> None:
 )
 def test_multiple_entry(tmp_path: Path, entries: tuple[tuple[str, float], ...]) -> None:
     path = tmp_path / "history.json"
-    
-    for entry in entries:
-        add_entry(path, entry[0], entry[1])
+
+    for expression, result in entries:
+        add_entry(path, expression, result)
 
     history = load_history(path)
 

@@ -57,14 +57,13 @@ def _is_number(token: str) -> bool:
     return True
 
 
-def _validate(tokens: list[str]) -> bool:
+def _validate(tokens: list[str]) -> None:
     """
     Проверяет, что токены образуют корректное выражение: числа и операторы чередуются, унарный знак стоит только
     перед числом
 
     :param tokens: токены в обычном виде
     :raises ValidationError: выкидывается с определённым кодом, если выражение не прошло проверку
-    :return: True, если все проверки прошли
     """
     if not tokens:
         raise ValidationError("выражение пустое или некорректно.", "empty_expression")
@@ -95,8 +94,6 @@ def _validate(tokens: list[str]) -> bool:
 
     if expecting_number:
         raise ValidationError("выражение не может заканчиваться на оператор.", "missing_operand")
-
-    return True
 
 
 def _merge_unary_signs(tokens: list[str]) -> list[str]:
