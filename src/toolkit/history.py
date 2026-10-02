@@ -11,7 +11,7 @@ def load_history(path: Path) -> list[dict]:
 
     :param path: путь к файлу в виде объекта Path
     :raises HistoryError: перехватывает стандартные исключения и выкидывает кастомные с соответствующим error_code
-    :return: словарь с историей
+    :return: список с историей
     """
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -19,7 +19,7 @@ def load_history(path: Path) -> list[dict]:
     except FileNotFoundError:
         return []
     except OSError as e:
-        raise HistoryError("Нет прав не чтение файла history.json или путь неверный.",
+        raise HistoryError("Нет прав на чтение файла history.json или путь неверный.",
                            "permission_error") from e
     except (json.JSONDecodeError, UnicodeDecodeError) as e:
         raise HistoryError("JSON файл с историей не читается. Пожалуйста, исправьте его или удалите.",
@@ -43,7 +43,6 @@ def add_entry(path: Path, expression: str, result: float) -> None:
     :param expression: выражение в виде строки
     :param result: полученный результат
     :raises HistoryError: перехватывает стандартные исключения и выкидывает кастомные с соответствующим error_code
-    :return:
     """
     history = load_history(path)
 
